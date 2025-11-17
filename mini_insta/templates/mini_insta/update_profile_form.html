@@ -1,0 +1,41 @@
+<!-- File: update_profile_form.html -->
+<!--  Author: Anna LaPrade (alaprade@bu.edu), 10/5/2025 -->
+<!-- Description: the template that allows to update profiles for the mini_insta app -->
+
+<!-- extend from the base template -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<div class="form-container">
+    <h1>Update this Profile</h1>
+
+    <!-- pull form data, allow multiple photos to be uploaded -->
+    <form action="{% url 'update_profile' %}" method="POST"
+        class="form_style">
+        {% csrf_token %}
+
+        <!-- grab feilds from UpdateProfileForm -->
+        <div class="form-field">
+            {{ form.bio_text.label_tag }}
+            {{ form.bio_text }}
+            
+            {{ form.display_name.label_tag }}
+            {{ form.display_name }}
+            
+            {{ form.profile_image_url.label_tag }}
+            {{ form.profile_image_url }}
+        </div>
+
+        <!-- update and cancel buttons -->
+        <div class="form-buttons">
+            <button type="submit">Update</button>
+        
+            <a href="{% url 'show_profile' profile.pk %}">
+                <button type="button" class="cancel-button">Cancel</button>
+            </a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

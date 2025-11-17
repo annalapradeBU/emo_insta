@@ -1,0 +1,30 @@
+<!-- File: create_profile_form.html -->
+<!--  Author: Anna LaPrade (alaprade@bu.edu), 10/23/2025 -->
+<!-- Description: the template for the form that allows profile/user creation for the mini_insta app -->
+
+<!-- extend from the base template -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<h1 class="page-title">Create Your Account and Profile</h1>
+
+<form method="post" enctype="multipart/form-data" class="create-profile-form">
+  {% csrf_token %}
+
+  <!-- user form stuff -->
+  <fieldset>
+    <legend>Account Info</legend>
+    {{ user_form.as_p }}
+  </fieldset>
+
+  <!-- profile form stuff -->
+  <fieldset>
+    <legend>Profile Info</legend>
+    {{ profile_form.as_p }}
+  </fieldset>
+
+  <button type="submit" class="update-post-button">Create Account</button>
+</form>
+
+{% endblock %}

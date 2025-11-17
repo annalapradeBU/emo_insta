@@ -1,0 +1,97 @@
+<!-- File: base.html -->
+<!--  Author: Anna LaPrade (alaprade@bu.edu), 09/23/2025 -->
+<!-- Description: the base html file that others extend for the mini_insta app -->
+
+<!-- allows to load in static data -->
+{% load static %}
+
+<html>
+    <!-- Heading, linked stylesheet -->
+    <head>
+        <title>Emo Insta</title>
+        <link rel="stylesheet" href="{% static 'styles-mini-insta.css' %}">
+            
+    </head>
+
+    <body>
+        <!-- basic navagtion bar -->
+        <header class="navbar">
+            <h1 class="logo">Emo Insta</h1>
+
+            <div class="navbar-user-actions">
+                <!-- only add logout option if user is logged in -->
+                {% if request.user.is_authenticated %}
+                    <span class="navbar-user">User: {{ request.user }}</span>
+        
+                    <form method="post" action="{% url 'logout' %}" class="navbar-form">
+                        {% csrf_token %}
+                        <button type="submit" class="navbar-button">Logout</button>
+                    </form>
+                {% else %}
+                    <!-- Only show "Not Logged In" + create profile + log in buttons if not logged in-->
+                    <span class="navbar-user">Not Logged In</span>
+                    <a href="{% url 'login' %}" class="navbar-button">Login</a>
+                    <a href="{% url 'create_profile' %}" class="navbar-button">Create Profile</a>
+                {% endif %}
+            </div>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="{% url 'show_all_profiles' %}">Show All</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- page-specific content goes here, with wrapper for better margin delegation -->
+        <div class="content-wrapper">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+
+        <!-- bottom navigation bar -->
+        <nav class="bottom-nav">
+    
+
+            <!-- all Profiles -->
+            <a href="{% url 'show_all_profiles' %}">All Profiles</a> 
+
+            <!-- search page -->
+
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'search' %}">Search</a>
+
+            {% endif %}
+
+            {% if profile and request.user.is_authenticated %}
+                <!-- create Post -->
+                <a href="{% url 'create_post' %}">Create Post</a>
+
+                
+
+                
+            {% endif %}
+
+            <!-- profile page, show only if user is logged in and has a profile -->
+            {% if request.user.is_authenticated %}
+                {% with request.user.profile_set.first as my_profile %}
+                    {% if my_profile %}
+                        <a href="{% url 'show_profile' my_profile.pk %}">My Profile</a>
+                         <!-- if we have a profile, link Home to the feed -->
+                        <a href="{% url 'show_feed' %}">Show Feed</a>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
+        </nav>
+
+        <!-- footer with music embed :D -->
+        <footer class="site-footer">
+            <p>Listen to MCR while browsing:</p>
+            <!-- I did steal this from the Spotify website,,, they have embedding code :) -->
+            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/artist/7FBcuc1gsnv6Y1nwFtNRCb?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </footer>
+    </body>
+ 
+</html>
+
+

@@ -1,0 +1,19 @@
+<!-- File: logout.html -->
+<!--  Author: Anna LaPrade (alaprade@bu.edu), 10/23/2025 -->
+<!-- Description: the template for the form that allows logout for the mini_insta app -->
+
+<!-- extend from the base template -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<div class="form-container" style="text-align:center;">
+    <h1 class="logout-message">You've been logged out from Emo Insta</h1>
+
+    <!-- log in again button -->
+    <div style="margin-top:15px;">
+        <a href="{% url 'login' %}" class="navbar-button">Login again?</a>
+    </div>
+</div>
+
+{% endblock %}

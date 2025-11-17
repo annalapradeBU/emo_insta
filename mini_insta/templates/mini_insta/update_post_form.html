@@ -1,0 +1,35 @@
+<!-- File: update_post_form.html -->
+<!--  Author: Anna LaPrade (alaprade@bu.edu), 10/5/2025 -->
+<!-- Description: the template that allows to update posts for the mini_insta app -->
+
+<!-- extend from the base template -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<div class="form-container">
+    <h1>Update this Post</h1>
+
+    <!-- pull form data, allow multiple photos to be uploaded -->
+    <form action="{% url 'update_post' post.pk %}" method="POST"
+        enctype="multipart/form-data" class="form_style">
+        {% csrf_token %}
+
+        <!-- grab feilds from UpdatePostForm -->
+        <div class="form-field">
+            {{ form.caption.label_tag }}
+            {{ form.caption }}
+        </div>
+
+        <!-- update and cancel buttons -->
+        <div class="form-buttons">
+            <button type="submit">Update</button>
+        
+            <a href="{% url 'show_post' post.pk %}">
+                <button type="button" class="cancel-button">Cancel</button>
+            </a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

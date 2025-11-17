@@ -1,0 +1,110 @@
+<!-- File: show_profile.html -->
+<!-- Author: Anna LaPrade (alaprade@bu.edu), 09/23/2025 -->
+<!-- Description: the html template to show details of one profile for the mini_insta app -->
+
+<!-- extend from the base template -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<!-- profile information -->
+<h1>{{ profile.username }}</h1>
+    <profile-detail>
+        
+        <div>
+            <!-- following/followers -->
+            <div class="followers-following-container">
+                <div class="profile-card">
+                    <h3>Followers</h3>
+                    <a href="{% url 'show_followers' profile.pk %}" class="update-post-button">
+                        {{ profile.get_num_followers }}
+                    </a>
+                </div>
+
+                <!-- following -->
+                <div class="profile-card">
+                    <h3>Following</h3>
+                    <a href="{% url 'show_following' profile.pk %}" class="update-post-button">
+                        {{ profile.get_num_following }}
+                    </a>
+                </div>
+
+                <!-- if user is logged in and its not their profile -->
+                {% if request.user.is_authenticated and request.user != profile.user %}
+                    <!-- if already following this user, show unfollow button -->
+                    {% if logged_in_profile in profile.get_followers %}
+
+                        <form method="post" action="{% url 'delete_follow' profile.pk %}" class="follow-form">
+                            {% csrf_token %}
+                            
+                            <button type="submit" class="update-post-button unfollow-button">Unfollow</button>
+                        </form>
+
+                    <!-- if not, show follow button-->
+                    {% else %}
+
+                        <form method="post" action="{% url 'follow' profile.pk %}" class="follow-form">
+                            {% csrf_token %}
+
+                            <button type="submit" class="update-post-button follow-button">Follow</button>
+                        </form>
+
+                    {% endif %}
+                {% endif %}
+
+                
+            </div>
+
+            <br>
+
+            <h2>{{ profile.display_name }}</h2>
+
+            
+            <p>
+                {{ profile.bio_text|linebreaks }}
+            </p>
+
+
+            <p>
+                created {{ profile.join_date }}
+            </p>
+        </div>
+
+        <!-- bigger profile image with interaction :) -->
+        <div class="profile-detail-image-container">
+            <img src="{{ profile.profile_image_url }}" alt="">
+            <img src="https://www.freeiconspng.com/thumbs/blood-splatter-png/blood-splatter-transparent-png-1.png" class="blood-overlay" alt="">
+        </div>  
+
+        <!-- button to allow profile updates -->
+        {% if request.user.is_authenticated and request.user == profile.user %}
+            <div class="profile_update_button">
+                <a href="{% url 'update_profile' %}" class="update-post-button">Update this Profile?</a>
+            </div>
+        {% endif %}
+        
+    </profile-detail>
+
+    <!-- post displays on the profile -->
+    <div class="post-profile">
+        <h2>Posts</h2>
+        
+        <!-- loops through all the posts associated with the profile-->
+        {% for post in profile.get_all_posts %}
+            <div>
+                <!-- id there's an associated photo, display it -->
+                {% if post.photo_set.first %}
+                <a href="{% url 'show_post' post.pk %}"> 
+                    <img src="{{ post.photo_set.first.get_image_url }}" alt="" width="300px">
+                </a>
+                <!-- otherwise, show a default image -->
+                {% else %}
+                <a href="{% url 'show_post' post.pk %}"> 
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png" alt="" width="300px">
+                </a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    
+{% endblock %}

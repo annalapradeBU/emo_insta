@@ -1,0 +1,72 @@
+<!-- File: search_results.html -->
+<!-- Author: Anna LaPrade (alaprade@bu.edu), 10/15/2025 -->
+<!-- Description: the html template to show all search results -->
+
+<!-- extend from the base template -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<!-- basic info  -->
+<h2>Search Results for "{{ query }}"</h2>
+
+<br>
+
+<!-- Resulting profiles -->
+<h3>Matching Profiles</h3>
+
+<br>
+
+<!-- loop through potenital matches if they exist-->
+{% if matching_profiles %}
+    <main class="grid-container">
+        <!-- display all matching profiles -->
+        {% for prof in matching_profiles %}
+        <div class="profile-card">
+    
+            <!-- generates profile URL -->
+            <a href="{% url 'show_profile' prof.pk %}"> 
+                <img src="{{ prof.profile_image_url }}" alt="{{ prof.username }}'s profile picture" class="profile-image">     
+            </a>
+    
+            <h2>{{ prof.display_name }}</h2>
+            <p>Username: {{ prof.username }}</p>
+    
+        </div>
+    {% endfor %}
+    </main>
+{% else %}
+    <p>No profiles found.</p>
+{% endif %}
+
+<br>
+
+<!-- Display resulting posts -->
+<h3>Matching Posts</h3>
+
+<br>
+
+<!-- check if any posts match -->
+{% if posts %}
+    <!-- display all matching posts -->
+    {% for post in posts %}
+
+        <div class="post-content-search">
+
+            <h4>{{ post.profile.username }}</h4>
+
+            <p>{{ post.caption }}</p>
+
+            <!-- dislay the first photo of the post-->
+            {% if post.get_all_photos.first %}
+                <img src="{{ post.get_all_photos.first.get_image_url }}" alt="Post photo" class="post-photo">
+            {% endif %}
+            
+            <p>{{ post.timestamp }}</p>
+        </div>
+
+    {% endfor %}
+{% else %}
+    <p>No posts found.</p>
+{% endif %}
+{% endblock %}

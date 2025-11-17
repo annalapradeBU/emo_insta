@@ -1,0 +1,97 @@
+<!-- File: show_feed.html -->
+<!-- Author: Anna LaPrade (alaprade@bu.edu), 10/15/2025 -->
+<!-- Description: the html template to show all the posts on a given profile's feed -->
+
+<!-- extend from the base template -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+    <!-- loop through posts in following list-->
+    {% for post in posts %}
+            <div class="post-box">
+                <div class="post-content">
+                    <div class="post-header">
+                        <!-- clickable profile image -->
+                        <a href="{% url 'show_profile' post.profile.pk %}">
+                            <img src="{{ post.profile.profile_image_url }}" 
+                                alt="{{ post.profile.username }}'s profile picture" 
+                                class="tiny-profile-pic">
+                        </a>
+                        
+                        <!-- user and diplay name-->
+                        <h1>@{{ post.profile.username }}  --  {{ post.profile.display_name }}</h1>
+                    </div>
+
+                    <!-- time stamp for entire post-->
+                    <p class="post-timestamp">posted at {{ post.timestamp }}</p>
+
+                        <!-- display the first photot of the post and its timestamp if it exists-->
+                        {% if post.get_all_photos.first %}
+                            <div class="photo-container">
+                                <a href="{% url 'show_post' post.pk %}">
+                                    <img src="{{ post.get_all_photos.first.get_image_url }}" alt="Post photo" class="post-photo">
+                                </a>
+                                
+                            </div>
+                            <p class="photo-timestamp">photo posted at {{ post.get_all_photos.first.timestamp }}</p>
+                        {% endif %}
+                    
+                    <p class="post-caption">{{ post.caption }}</p>
+
+                </div>
+
+            <br>
+
+            <!-- summary of likes, display at least 1 name if liked by >= 1-->
+            <div class="like-summary">
+                {% if post.get_all_likes.count > 0 %}
+                    Liked by <span class="like-user">@{{post.get_all_likes.0.profile.username }}</span>
+                    {% if post.get_all_likes.count > 1 %}
+                        and <span class="like-count">{{ post.get_all_likes.count|add:"-1" }} others</span>
+                    {% endif %}
+                {% else %}
+                    No likes yet
+                {% endif %}
+            </div>
+
+            <!-- like button for feed -->
+            <div class="like-buttons">
+                <!-- show if user is logged in and it's not their post -->
+                {% if request.user.is_authenticated and request.user != post.profile.user %}
+                    <!-- if user has liked it, show unlike button -->
+                    {% if post.liked_by_user %}
+                        <!-- Unlike button -->
+                        <form method="post" action="{% url 'delete_like' post.pk %}" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{% url 'show_feed' %}">
+                            <button type="submit" class="navbar-button">Unlike</button>
+                        </form>
+                    <!-- otherwise, show like button -->
+                    {% else %}
+                        <!-- Like button -->
+                        <form method="post" action="{% url 'like' post.pk %}" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{% url 'show_feed' %}">
+                            <button type="submit" class="navbar-button">Like</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <!-- loop through comments and display them-->
+            <div class="comment-box-detail">
+                {% for comment in post.get_all_comments %}
+                    <div class="comment-box">
+                        <h4>{{ comment.profile.username }}</h4>
+                        <p class="comment-text">{{ comment.text }}</p>
+                        <p class="comment-timestamp">{{ comment.timestamp }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+
+
+
+{% endblock %}

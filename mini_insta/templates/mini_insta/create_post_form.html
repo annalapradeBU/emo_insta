@@ -1,0 +1,39 @@
+<!-- File: create_post_form.html -->
+<!--  Author: Anna LaPrade (alaprade@bu.edu), 09/30/2025 -->
+<!-- Description: the template for the form that allows post creation for the mini_insta app -->
+
+<!-- extend from the base template -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<!-- form formatting -->
+    <div class="form-container">
+        <h1>Create a new Post on "{{ profile.username }}"</h1>
+
+        <!-- takes form from forms.py, adds a URL feild and cancel/submit buttons -->
+        <form method="POST" class="form_style" enctype="multipart/form-data" >
+            {% csrf_token %}
+            <div class="form-field">
+                {{ form.caption.label_tag }}
+                {{ form.caption }}
+            </div>
+
+            <!-- add extra image field -->
+            <div class="form-field">
+                <label for="id_image_files" class="upload-button-label">Upload Images</label>
+                <input type="file" name="image_files" id="id_image_files" multiple hidden>
+            </div>
+
+            <!-- cancel and submit buttons -->
+            <div class="form-buttons">
+                <button type="submit">Submit</button>
+                <!-- generates URL to go back to profile -->
+                <a href="{% url 'show_profile' profile.pk %}">
+                    <button type="button" class="cancel-button">Cancel</button>
+                </a>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

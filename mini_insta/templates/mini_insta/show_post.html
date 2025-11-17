@@ -1,0 +1,140 @@
+<!-- File: show_post.html -->
+<!--  Author: Anna LaPrade (alaprade@bu.edu), 09/30/2025 -->
+<!-- Description: the template that allows detail post view for the mini_insta app -->
+
+<!-- extend from the base template -->
+{% extends 'mini_insta/base.html' %}
+
+
+{% block content %}
+
+
+    <!-- add a back to profile button -->
+    <!--maybe just pfp better? <a href = "{% url 'show_profile' post.profile.pk %}" class = "update-post-button">Back to profile</a>
+    -->
+    
+
+        <!-- post details -->
+        <div class="post-content-detail">
+
+        <div class="post-header">
+            <a href="{% url 'show_profile' post.profile.pk %}">
+                <img src="{{ post.profile.profile_image_url }}" 
+                     alt="{{ post.profile.username }}'s profile picture" 
+                     class="tiny-profile-pic">
+            </a>
+            
+            <h1>@{{ post.profile.username }}  --  {{ post.profile.display_name }}</h1>
+        </div>
+
+        <!-- shows summary of likes -->
+        <div class="like-summary">
+            <!-- if there are more then none, display the first user -->
+            {% if post.get_all_likes.count > 0 %}
+                Liked by <span class="like-user">@{{post.get_all_likes.0.profile.username }}</span>
+                <!-- if there is more than 1, display the rest as a number -->
+                {% if post.get_all_likes.count > 1 %}
+                    and <span class="like-count">{{ post.get_all_likes.count|add:"-1" }} others</span>
+                {% endif %}
+            
+            <!-- otherwise, show there's none yet -->
+            {% else %}
+                No likes yet
+            {% endif %}
+        </div>
+
+        <!-- show if user is logged in and this is NOT their post -->
+        {% if request.user.is_authenticated and request.user != post.profile.user %}
+            <!-- if they have liked it, show the unlike button -->
+            {% if has_liked %}
+
+                <form method="post" action="{% url 'delete_like' post.pk %}" class="like-form">
+                    {% csrf_token %}
+
+                    <input type="hidden" name="next" value="{% url 'show_post' post.pk %}">
+
+                    <button type="submit" class="update-post-button unlike-button">💔 Unlike</button>
+                </form>
+
+            <!-- if they haven't, show the like button -->
+            {% else %}
+
+                <form method="post" action="{% url 'like' post.pk %}" class="like-form">
+                    {% csrf_token %}
+
+                    <input type="hidden" name="next" value="{% url 'show_post' post.pk %}">
+
+                    <button type="submit" class="update-post-button like-button">❤️ Like</button>
+                </form>
+
+            {% endif %}
+        {% endif %}
+
+
+
+        <h2>{{post.caption}}</h2>
+
+        <h3>Posted at {{post.timestamp}}</h3>
+
+        <!-- loops through the images in the post and displays them, along with timestamp -->
+        <div class="all-photos-container">
+            {% for photo in post.get_all_photos %}
+            <div class="photo-set">
+                <img src="{{ photo.get_image_url }}" alt="" class="post-photo">
+                <p class="photo-timestamp">Photo posted at {{photo.timestamp}}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- delete/update post buttons -->
+        {% if request.user.is_authenticated and request.user == post.profile.user %}
+            <a href="{% url 'delete_post' post.pk %}" class="delete-post-button">Delete this Post?</a>
+            <a href="{% url 'update_post' post.pk %}" class="update-post-button">Update this Post?</a>
+        {% endif %}
+
+        </div>
+
+        <br>
+        <br>
+        
+        <!-- comment section -->
+        <div class="comment-box-detail">
+
+            <h2>Comments</h3>
+
+            <br>
+
+            <!-- loops through the comments in the post and displays them -->
+            {% for comment in post.get_all_comments %}
+                <div class="comment-box">
+                    <h3>{{comment.profile.username}}</h3>
+                    <p class="comment-text"> {{comment.text}} </p>
+                    <p class="timestamp-text"> Comment posted at {{comment.timestamp}}</p>
+
+                    
+                </div>
+            {% endfor %}
+
+            {% if request.user.is_authenticated %}
+                <form method="post" action="{% url 'create_comment' post.pk %}" class="comment-form">
+                    {% csrf_token %}
+                    <div class="form-field">
+                        
+                        {{ comment_form.text }}
+                    </div>
+                    <br>
+                    <button type="submit" class="update-post-button">💬 Comment</button>
+                </form>
+            {% else %}
+                <p><a href="{% url 'login' %}" class="update-post-button">Log in</a> to comment.</p>
+
+                
+            {% endif %}
+
+        </div>
+
+{% endblock %}
+
+
+
+

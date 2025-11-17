@@ -1,0 +1,30 @@
+<!-- File: show_all_profiles.html -->
+<!-- Author: Anna LaPrade (alaprade@bu.edu), 09/23/2025 -->
+<!-- Description: the html template to show all profiles for the mini_insta app -->
+
+<!-- extend from the base template -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+    <h1>All Profiles</h1>
+
+    <!-- displays profiles in a grid -->
+    <main class="grid-container">
+        <!-- interate through each profile and add appropriate details to a card -->
+        {% for profile in profiles %}
+        <div class="profile-card">
+
+            <!-- generates profile URl-->
+            <a href="{% url 'show_profile' profile.pk %}"> 
+                <img src="{{ profile.profile_image_url }}" alt="{{ profile.username }}'s profile picture" class="profile-image">
+            </a>
+
+            <h2>{{ profile.display_name }}</h2>
+            
+            <p>Username: {{ profile.username }}</p>
+        </div>
+        {% endfor %}
+    </main>
+
+{% endblock %}

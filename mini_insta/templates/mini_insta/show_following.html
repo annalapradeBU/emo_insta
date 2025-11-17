@@ -1,0 +1,39 @@
+<!-- File: show_following.html -->
+<!--  Author: Anna LaPrade (alaprade@bu.edu), 10/15/2025 -->
+<!-- Description: the template that allows detail following view for the mini_insta app -->
+
+<!-- extend from the base template -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<a href="{% url 'show_profile' profile.pk %}" class="navbar-button">← Back to Profile</a>
+
+    <h1>Following</h1>
+
+    <br>
+
+    <main class="grid-container">
+        <!-- loop through the profiles they are followed by -->
+        {% for followed in profile.get_following %}
+
+        <!-- display profile card -->
+        <div class="profile-card">
+
+            <a href="{% url 'show_profile' followed.pk %}"> 
+                <img src="{{ followed.profile_image_url }}" alt="{{ followed.username }}'s profile picture" class="profile-image">
+            </a>
+
+            <h2>{{ followed.display_name }}</h2>
+            <p>Username: {{ followed.username }}</p>
+
+        </div>
+
+        <!-- if no followers, display that there's none -->
+        {% empty %}
+        <p>Following no profiles yet.</p>
+        {% endfor %}
+
+    </main>
+
+{% endblock %}

@@ -1,0 +1,19 @@
+<!-- File: search.html -->
+<!-- Author: Anna LaPrade (alaprade@bu.edu), 10/15/2025 -->
+<!-- Description: the html template to show the search form -->
+
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+    <div class="form-container">
+
+        <h2>Search</h2>
+        
+        <!-- bring in a search form for user input -->
+        <form action="{% url 'search' %}" method="get" class="search-form">
+            <input type="text" name="query" placeholder="Search Profiles or Posts" required>
+            <button type="submit">Search</button>
+        </form>
+
+    </div>
+{% endblock %}

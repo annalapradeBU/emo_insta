@@ -1,0 +1,39 @@
+<!-- File: login.html -->
+<!--  Author: Anna LaPrade (alaprade@bu.edu), 10/23/2025 -->
+<!-- Description: the template for the form that allows login for the mini_insta app -->
+
+<!-- extend from the base template -->
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+
+<div class="form-container">
+    <h1 class="logout-message">Login to Emo Insta</h1>
+
+    <form action="{% url 'login' %}" method="POST" class="form_style">
+        {% csrf_token %}
+
+        <!-- django form fields rendered with proper styling -->
+        {{ form.as_p }}
+
+        <!-- if next, send to that specifed next-->
+        {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+        {% else %}
+            <!-- otherwise, send to show_all_profiles as a default -->
+            <input type="hidden" name="next" value="{% url 'show_all_profiles' %}">
+        {% endif %}
+
+        <div class="form-buttons">
+            <button type="submit">Login</button>
+        </div>
+    </form>
+
+    <!-- create account if user doesn't have one -->
+    <div class="create-account-message">
+        Don't have an account? 
+        <a href="{% url 'create_profile' %}" class="update-post-button">Create Profile</a>
+    </div>
+</div>
+
+{% endblock %}
